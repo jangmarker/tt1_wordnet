@@ -61,17 +61,13 @@ int main(int argc, char** argv) {
             }
         }
     } else if (*semrels) {
-        const auto synset = database.synsetByIdentifier(std::make_pair(partOfSpeech[0], offset));
-
-        const auto is_semantic = [](const SynsetPointer &pointer) { return pointer.sourceTarget == 0; };
-
+        const auto origin = database.synsetByIdentifier(std::make_pair(partOfSpeech[0], offset));
         Database::Direction direction = relationDirection == "any" ? Database::Both :
                                         relationDirection == "in" ? Database::Incoming : Database::Outgoing;
-        SynsetIdentifier originIdentifier = std::make_pair(synset->type, synset->offset);
-        std::vector<OtherSynsetIdAndPointer> connected = database.connectedSynsets(originIdentifier, direction);
 
+        std::vector<OtherSynsetIdAndPointer> connected = database.connectedSynsets(origin->id(), direction);
         for (const OtherSynsetIdAndPointer &otherSynsetIdAndPointer : connected) {
-            if (is_semantic(*otherSynsetIdAndPointer.second)) {
+            if (otherSynsetIdAndPointer.second->semantic()) {
                 Synset *otherSynset = database.synsetByIdentifier(otherSynsetIdAndPointer.first);
                 std::cout << *(otherSynsetIdAndPointer.second) << " " << *otherSynset << std::endl;
                 if (*semrelsFull)

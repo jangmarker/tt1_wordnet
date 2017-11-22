@@ -26,6 +26,10 @@ struct SynsetPointer {
     SynsetIdentifier pointedToId() const {
         return std::make_pair(pos, offset);
     }
+
+    bool semantic() {
+        return sourceTarget == 0;
+    }
 };
 
 using OtherSynsetIdAndPointer = std::pair<SynsetIdentifier, SynsetPointer*>;
