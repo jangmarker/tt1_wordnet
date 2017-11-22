@@ -12,8 +12,8 @@ Database::Database(FileAccess &files)
     loadSynsetsForPos("r");
 }
 
-std::set<OtherSynsetIdAndPointer> Database::synsetsPointingAt(const Synset &synset) {
-    SynsetIdentifier identifier = std::make_pair(synset.type, synset.offset);
+std::set<OtherSynsetIdAndPointer> Database::synsetsPointingAt(Synset *synset) {
+    SynsetIdentifier identifier = std::make_pair(synset->type, synset->offset);
     return mSynsetByPointingAt[identifier];
 }
 
@@ -58,7 +58,7 @@ std::vector<OtherSynsetIdAndPointer> Database::connectedSynsets(SynsetIdentifier
     }
 
     if (direction & Database::Incoming) {
-        std::set<OtherSynsetIdAndPointer> synsetsPointingAtSelf = synsetsPointingAt(*self);
+        std::set<OtherSynsetIdAndPointer> synsetsPointingAtSelf = synsetsPointingAt(self);
         connected.reserve(connected.size() + synsetsPointingAtSelf.size());
         std::copy(synsetsPointingAtSelf.begin(), synsetsPointingAtSelf.end(), std::back_inserter(connected));
     }

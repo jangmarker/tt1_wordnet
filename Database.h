@@ -15,7 +15,7 @@ public:
     enum Direction { Incoming = 0x1, Outgoing = 0x2 , Both = Incoming | Outgoing};
 
 public:
-    std::set<OtherSynsetIdAndPointer> synsetsPointingAt(const Synset &synset);
+    std::set<OtherSynsetIdAndPointer> synsetsPointingAt(Synset *synset);
     Synset *synsetByIdentifier(SynsetIdentifier identifier);
     Synset *synsetByOffset(const std::string &pos, SynsetOffset offset);
     std::vector<Synset> synsetsByIndexWord(const std::string &pos, std::string index_word);
