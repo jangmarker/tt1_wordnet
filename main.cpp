@@ -6,12 +6,12 @@
 #include <iostream>
 #include <iomanip>
 
-static const std::string databaseFolder("./");
-
 int main(int argc, char** argv) {
     CLI::App app{"Text Technologie 1 - Aufgabe 2 - Lösung Jan Marker"};
 
     std::set<std::string> partOfSpeechOptions{"n", "a", "v", "r"};
+
+    std::string databaseFolder("./");
 
     std::string partOfSpeech;
     std::string indexWord;
@@ -20,6 +20,8 @@ int main(int argc, char** argv) {
 
     std::string partOfSpeech2;
     unsigned int offset2;
+
+    app.add_option("--db", databaseFolder, "Path to the dict/ directory, where the WordNet database is located.", true);
 
     auto* query = app.add_subcommand("query");
     query->add_set("--pos", partOfSpeech, partOfSpeechOptions, "Part of speech")->required();
