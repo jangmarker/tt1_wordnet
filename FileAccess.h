@@ -35,6 +35,9 @@ std::istream &operator>>(std::istream &stream, std::vector<LineItem> &list)
     return stream;
 }
 
+std::ostream &operator<<(std::ostream &stream, const Synset &synset);
+std::ostream &operator<<(std::ostream &stream, const SynsetPointer &synsetPointer);
+
 class FileAccess {
 
 public:

@@ -75,6 +75,7 @@ const char *oneSynsetWithHeader = \
 "00002137 03 n 02 abstraction 0 abstract_entity 0 010 @ 00001740 n 0000 + 00692329 v 0101 ~ 00023100 n 0000 ~ 00024264 n 0000 ~ 00031264 n 0000 ~ 00031921 n 0000 ~ 00033020 n 0000 ~ 00033615 n 0000 ~ 05810143 n 0000 ~ 07999699 n 0000 | a general concept formed by extracting common features from specific examples\n";
 const char *oneSynsetHexadecimalWordCount = "000000000 38 v 0d scat 0 run 4 scarper 0 turn_tail 0 lam 0 run_away 0 hightail_it 0 bunk 0 head_for_the_hills 0 take_to_the_woods 0 escape 2 fly_the_coop 0 break_away 0 005 @ 02009433 v 0000 + 10115082 n 0602 + 00060201 n 0502 ~ 02075462 v 0000 ~ 02075764 v 0000 03 + 01 00 + 02 00 + 22 00 | flee; take to one's heels; cut and run; \"If you see this man, run!\"; \"The burglars escaped before the police showed up\"  ";
 const char *oneSynsetHexadecimalLexId = "00000000 38 v 01 run b 004 $ 01926984 v 0000 @ 01835496 v 0000 + 13995935 n 0101 $ 02421921 v 0000 02 + 04 00 + 22 00 | move about freely and without restraint, or act as if running around in an uncontrolled way; \"who are these people running around in the building?\"; \"She runs around telling everyone of her troubles\"; \"let the dogs run free\" ";
+const char *calculatorSynsetWithPointers = "00000000 06 n 02 calculator 0 calculating_machine 0 010 @ 03699975 n 0000 + 00637259 v 0101 ~ 02666196 n 0000 ~ 02679142 n 0000 ~ 02679257 n 0000 ~ 03116767 n 0000 ~ 03483823 n 0000 ~ 03807334 n 0000 ~ 04035231 n 0000 ~ 04348988 n 0000 | a small machine that is used for mathematical calculations  ";
 
 TEST_CASE("parse calculator index line", "[index]") {
     LemmaIndex index;
@@ -159,4 +160,11 @@ TEST_CASE("read synset with hexadecimal lex id", "[synset]") {
     REQUIRE(synset.type == Synset::Verb);
     REQUIRE(synset.words.size() == 1);
     REQUIRE(synset.gloss == std::string(" move about freely and without restraint, or act as if running around in an uncontrolled way; \"who are these people running around in the building?\"; \"She runs around telling everyone of her troubles\"; \"let the dogs run free\" "));
+}
+
+TEST_CASE("read calculator synset with pointers", "[synset]") {
+    auto stream = std::istringstream(calculatorSynsetWithPointers);
+    Synset synset = loadSynset(stream, 0);
+    REQUIRE(synset.gloss == " a small machine that is used for mathematical calculations  ");
+    REQUIRE(synset.pointers.size() == 10);
 }

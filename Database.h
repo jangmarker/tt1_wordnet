@@ -12,6 +12,8 @@ public:
     explicit Database(FileAccess &files);
 
 public:
+    std::set<std::pair<SynsetIdentifier, SynsetPointer*>> synsetsPointingAt(const Synset &synset);
+    Synset synsetByIdentifier(SynsetIdentifier identifier);
     Synset synsetByOffset(const std::string &pos, SynsetOffset offset);
     std::vector<Synset> synsetsByIndexWord(const std::string &pos, std::string index_word);
 
@@ -23,7 +25,7 @@ private:
 
     std::map<char, SynsetDatabase> mSynsets;
     std::map<char, std::map<SynsetOffset, Synset*>> mSynsetsByIndex;
-    std::map<SynsetIdentifier, std::set<SynsetIdentifier>> mSynsetsBeingPointedAt;
+    std::map<SynsetIdentifier, std::set<std::pair<SynsetIdentifier, SynsetPointer*>>> mSynsetsBeingPointedAt;
 };
 
 

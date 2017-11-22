@@ -11,6 +11,15 @@ Database::Database(FileAccess &files)
     loadSynsetsForPos("r");
 }
 
+std::set<std::pair<SynsetIdentifier, SynsetPointer*>> Database::synsetsPointingAt(const Synset &synset) {
+    SynsetIdentifier identifier = std::make_pair(pos_to_str[synset.type][0], synset.offset);
+    return mSynsetsBeingPointedAt[identifier];
+}
+
+Synset Database::synsetByIdentifier(SynsetIdentifier identifier) {
+    return *mSynsetsByIndex[identifier.first][identifier.second];
+}
+
 Synset Database::synsetByOffset(const std::string &pos, SynsetOffset offset)
 {
     auto *synset = mSynsetsByIndex[pos[0]][offset];
@@ -48,7 +57,7 @@ void Database::loadSynsetsForPos(const std::string &pos)
         SynsetIdentifier synsetIdentifier = std::make_pair(pos[0], synset.offset);
         for (SynsetPointer &pointer : synset.pointers) {
             SynsetIdentifier targetIdentifier = std::make_pair(pos_to_str[pointer.pos][0], pointer.offset);
-            mSynsetsBeingPointedAt[targetIdentifier].insert(synsetIdentifier);
+            mSynsetsBeingPointedAt[targetIdentifier].insert(std::make_pair(synsetIdentifier, &pointer));
         }
     }
 }

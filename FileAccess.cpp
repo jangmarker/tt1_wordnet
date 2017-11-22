@@ -2,6 +2,8 @@
 
 #include <sstream>
 #include <string>
+#include <iostream>
+#include <iomanip>
 
 std::istream &operator>>(std::istream &stream, LemmaIndexItem &index)
 {
@@ -57,7 +59,7 @@ std::istream &operator>>(std::istream &stream, SynsetPointer &pointer)
     std::string pos;
     int sourceTarget;
 
-    stream >> pointerSymbol >> synsetOffset >> pos >> sourceTarget;
+    stream >> pointerSymbol >> synsetOffset >> pos >> std::hex >> sourceTarget >> std::dec;
 
     pointer.type = pointerSymbol;
     pointer.offset = synsetOffset;
@@ -100,7 +102,7 @@ std::istream &operator>>(std::istream &stream, Synset &synset)
     synsetLine >> pointerCount;
 
     pointers.reserve(pointerCount);
-    for (int i = 0; i > pointerCount; ++i) {
+    for (int i = 0; i < pointerCount; ++i) {
         synsetLine >> (pointers.emplace_back());
     }
 
@@ -118,6 +120,22 @@ std::istream &operator>>(std::istream &stream, Synset &synset)
     synset.gloss = gloss;
 
     return stream;
+}
+
+std::ostream &operator<<(std::ostream &stream, const Synset &synset)
+{
+    return stream
+           << pos_to_str[synset.type] << " "
+           << std::setfill('0') << std::setw(8) << synset.offset << std::setw(0)
+           << synset.gloss;
+}
+
+std::ostream &operator<<(std::ostream &stream, const SynsetPointer &synsetPointer)
+{
+    return stream
+           << synsetPointer.type
+           << " "
+           << "(TODO)";
 }
 
 namespace {
