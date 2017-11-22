@@ -22,7 +22,7 @@ public:
 
     std::vector<OtherSynsetIdAndPointer> connectedSynsets(SynsetIdentifier ownId, Direction = Both);
 
-    std::vector<SynsetIdentifier> shortestPath(SynsetIdentifier origin, SynsetIdentifier target, bool directed = false);
+    std::vector<OtherSynsetIdAndPointer> shortestPath(SynsetIdentifier origin, SynsetIdentifier target, bool directed = false);
 
 private:
     void loadSynsetsForPos(const std::string &pos);

@@ -73,11 +73,11 @@ std::ostream &operator<<(std::ostream &stream, const SynsetIdentifier &id)
     stream << id.first << " " << id.second;
 }
 
-std::vector<SynsetIdentifier> Database::shortestPath(SynsetIdentifier origin, SynsetIdentifier target, bool directed)
+std::vector<OtherSynsetIdAndPointer> Database::shortestPath(SynsetIdentifier origin, SynsetIdentifier target, bool directed)
 {
-    const SynsetIdentifier nullId = std::make_pair('0', 0);
+    const OtherSynsetIdAndPointer nullId = std::make_pair(std::make_pair('0', 0), nullptr);
     std::map<SynsetIdentifier, int> distance;
-    std::map<SynsetIdentifier, SynsetIdentifier> previous;
+    std::map<SynsetIdentifier, OtherSynsetIdAndPointer> previous;
 
     const auto smallestOnTop = [&distance](const SynsetIdentifier& a, const SynsetIdentifier& b) -> bool {
         if (distance[a] == distance[b]) {
@@ -110,17 +110,17 @@ std::vector<SynsetIdentifier> Database::shortestPath(SynsetIdentifier origin, Sy
                                                                                          : (distance[current] + 1);
                 if (new_distance < distance[neighbor]) {
                     distance[neighbor] = new_distance;
-                    previous[neighbor] = current;
+                    previous[neighbor] = std::make_pair(current, neighborAndEdge.second);
                     nodes.erase(neighbor);
                     nodes.insert(neighbor);
                 }
             }
             if (current == target) {
-                std::vector<SynsetIdentifier> path;
-                path.insert(path.cbegin(), current);
+                std::vector<OtherSynsetIdAndPointer> path;
+                path.insert(path.cbegin(), std::make_pair(current, nullptr));
                 while (previous[current] != nullId) {
-                    current = previous[current];
-                    path.insert(path.cbegin(), current);
+                    path.insert(path.cbegin(), previous[current]);
+                    current = previous[current].first;
                 }
                 return path;
             }

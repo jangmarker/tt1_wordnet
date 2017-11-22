@@ -80,10 +80,14 @@ int main(int argc, char** argv) {
         SynsetIdentifier origin = std::make_pair(partOfSpeech[0], offset);
         SynsetIdentifier target = std::make_pair(partOfSpeech2[0], offset2);
 
-        std::vector<SynsetIdentifier> shortestPath = database.shortestPath(origin, target, *shortestpathDirected);
-        for (SynsetIdentifier id : shortestPath) {
-            Synset *synset = database.synsetByIdentifier(id);
+        std::vector<OtherSynsetIdAndPointer> shortestPath = database.shortestPath(origin, target, *shortestpathDirected);
+        SynsetPointer *lastEdge = nullptr;
+        for (OtherSynsetIdAndPointer id : shortestPath) {
+            Synset *synset = database.synsetByIdentifier(id.first);
+            if (lastEdge)
+                std::cout << *(lastEdge) << " ";
             std::cout << *(synset) << std::endl;
+            lastEdge = id.second;
             if (*shortestpathFull)
                 std::cout << synset->words << std::endl;
         }
