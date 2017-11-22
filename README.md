@@ -103,6 +103,28 @@ are implement in `Output.cpp`.
 Definition of data structures. They are closely modelled after the file based database, so that they
 can be read by the operators in `Input.{h,cpp}`.
 
+## Development Environment
+This was developed using CLion (https://www.jetbrains.com/clion/), but every other C++-IDE with CMake
+support should be enough:
+- QtCreator
+- Visual Studio
+- KDevelop
+- CLion
+
+Of course, an editor can be enough, too.
+
+Prerequisites:
+- C++14 compiler (Clang, GCC, Visual Studio)
+- CMake
+
+Steps to compile:
+```bash
+tt1_wordnet$ mkdir build
+build$ cmake ..
+build$ cmake --build .
+build$ ./tt1_wordnet --db=path/to/WordNet/ --help
+```
+
 ## A few common structures
 
 ### PartOfSpeech (pos)
