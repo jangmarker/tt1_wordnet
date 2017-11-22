@@ -6,7 +6,7 @@
 #include <iostream>
 #include <iomanip>
 
-static const std::string databaseFolder("/home/privat/Projects/WordNet-3.0/dict/");
+static const std::string databaseFolder("./");
 
 int main(int argc, char** argv) {
     CLI::App app{"Text Technologie 1 - Aufgabe 2 - Lösung Jan Marker"};
