@@ -1,15 +1,19 @@
-#ifndef TT1_WORDNET_INDEX_H
-#define TT1_WORDNET_INDEX_H
+#ifndef TT1_WORDNET_DATABASE_H
+#define TT1_WORDNET_DATABASE_H
 
-#include "wordnet.h"
 
-using LemmaIndex = std::vector<LemmaIndexItem>;
+#include "FileAccess.h"
 
-std::istream &operator>>(std::istream &stream, LemmaIndexItem &index);
-std::istream &operator>>(std::istream &stream, LemmaIndex &index);
+class Database {
+public:
+    explicit Database(FileAccess &files);
 
-Synset loadSynset(std::istream& data, SynsetOffset targetOffset);
-std::istream &operator>>(std::istream &stream, SynsetPointer &pointer);
-std::istream &operator>>(std::istream &stream, Synset &synset);
+public:
+    std::vector<Synset> synsetsByIndexWord(std::string pos, std::string index_word);
 
-#endif //TT1_WORDNET_INDEX_H
+private:
+    FileAccess &mFiles;
+};
+
+
+#endif //TT1_WORDNET_DATABASE_H
