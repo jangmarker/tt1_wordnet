@@ -7,5 +7,5 @@ build_script:
   - cmake --build .
 
 artifacts:
-  - path: **/*.exe
+  - path: '**/*.exe'
     name: executables
