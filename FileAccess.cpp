@@ -135,7 +135,9 @@ std::istream &operator>>(std::istream &stream, Synset &synset)
 
     pointers.reserve(pointerCount);
     for (int i = 0; i < pointerCount; ++i) {
-        synsetLine >> (pointers.emplace_back());
+        SynsetPointer pointer;
+        synsetLine >> pointer;
+        pointers.push_back(pointer);
     }
 
     while (gloss != "|")

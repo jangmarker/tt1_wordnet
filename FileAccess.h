@@ -29,7 +29,9 @@ std::istream &operator>>(std::istream &stream, std::vector<LineItem> &list)
     };
 
     while (stream.peek() != EOF) {
-        stream >> (list.emplace_back());
+        LineItem item;
+        stream >> item;
+        list.push_back(item);
     }
 
     return stream;
