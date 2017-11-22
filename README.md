@@ -69,3 +69,58 @@ Options:
   --directed                  Only search directed
   --full                      Show index words for all connected synsets
 ```
+
+# Code Organisation
+
+## `main.cpp`
+* command line parsing
+* query of `Database` for the necessary data
+* printing of the data
+
+## `Database.{h,cpp}`
+* implementation of algorithms on the data
+* loading of all data on construction
+* maintenance of indexes of the data
+
+## `FileAccess.{h,cpp}`
+* low level cache of input streams
+* mapping of requests for certain data to files
+
+## `Input.{h,cpp}`
+* implementation of `operator>>` for the different data structures
+
+Reading of data is based on `std::istringstream`. It automatically parses text data into
+C++ data types like `int`, `std:string` (up to the next whitespace), and custom structures.
+Custom structures are read using `operator>>` functions, which are implemented in `Input.cpp`.
+
+## `Output.{h,cpp}`
+* implementation of `output<<` for visualization of data
+
+Writing data on `std::cout` also works via operator overloads (of `operator<<`). The necessary operators
+are implement in `Output.cpp`.
+
+## `wordnet.h`
+Definition of data structures. They are closely modelled after the file based database, so that they
+can be read by the operators in `Input.{h,cpp}`.
+
+## A few common structures
+
+### PartOfSpeech (pos)
+Is defined as `char`. Unfortunately, the CLI parameter parser only knows strings (`std::string`) as option values.
+These strings are converted to `char` like so: `char partOfSpeech = partOfSpeechOptionValue[0]`.
+
+### LemmaIndexItem
+One line in the index files.
+
+### SynsetPointer
+Structure modelling a pointer between two synsets.
+
+### SynsetConnection
+A SynsetConnection is relative to an "origin" element: `SynsetConnection::pointer` is the pointer between the
+two synsets. It is important that "origin" does not own the pointer, i.e. the pointer can also be pointing at origin.
+It depends on the context of where `SynsetConnection` is used.
+
+### SynsetIdentifier
+A Synset can be identified by the database it is saved in (noun, verb, adjective, adverb) and its offset in the database.
+The `SynsetIdentifier` simply allows to handle these two data points in one object (`first` is the one-character-name for
+the database, `second` the offset in the database).

@@ -25,8 +25,12 @@ private:
 private:
     FileAccess &mFiles;
 
+    // data
     std::map<char, SynsetDatabase> mSynsets;
+
+    // index to query by Part Of Speech, then by offset
     std::map<char, std::map<SynsetOffset, Synset*>> mSynsetsByIndex;
+    // index to query Synsets that point at a synset (incoming connections)
     std::map<SynsetIdentifier, std::set<SynsetConnection>> mSynsetByPointingAt;
 };
 

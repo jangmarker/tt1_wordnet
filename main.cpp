@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
     FileAccess fileAccess(databaseFolder);
     Database database(fileAccess);
 
-    if (*query) {
+    if (*query) { // Task 1
         const auto synsets = database.synsetsByIndexWord(partOfSpeech[0], indexWord);
 
         if (synsets.empty()) {
@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
                 }
             }
         }
-    } else if (*semrels) {
+    } else if (*semrels) { // Task 2
         const auto origin = database.synsetByIdentifier(std::make_pair(partOfSpeech[0], offset));
         Database::Direction direction = relationDirection == "any" ? Database::Both :
                                         relationDirection == "in" ? Database::Incoming : Database::Outgoing;
@@ -75,7 +75,7 @@ int main(int argc, char** argv) {
                     std::cout << other->words << std::endl;
             }
         }
-    } else if (*shortestpath) {
+    } else if (*shortestpath) { // Task 3
         SynsetIdentifier origin = std::make_pair(partOfSpeech[0], offset);
         SynsetIdentifier target = std::make_pair(partOfSpeech2[0], offset2);
 
@@ -90,8 +90,8 @@ int main(int argc, char** argv) {
             if (*shortestpathFull)
                 std::cout << synset->words << std::endl;
         }
-    } else {
-        // TODO task 4 is not implemented.. two days is not enough time :-(
+    } else { // Task 4
+        // TODO task 4 is not implemented.. 1.5 days is not enough time :-(
     }
 
     return 0;
