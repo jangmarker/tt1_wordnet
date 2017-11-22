@@ -133,7 +133,7 @@ TEST_CASE("read synset from offset", "[synset]") {
     auto stream = std::istringstream(oneSynsetNoHeader);
     Synset synset = loadSynset(stream, 0);
     REQUIRE(synset.offset == 0);
-    REQUIRE(synset.type == Synset::Noun);
+    REQUIRE(synset.type == 'n');
     REQUIRE(synset.gloss == " that which is perceived or known or inferred to have its own distinct existence (living or nonliving)  ");
 }
 
@@ -141,7 +141,7 @@ TEST_CASE("read synset from offset with header", "[synset]") {
     auto stream = std::istringstream(oneSynsetWithHeader);
     Synset synset = loadSynset(stream, 2137);
     REQUIRE(synset.offset == 2137);
-    REQUIRE(synset.type == Synset::Noun);
+    REQUIRE(synset.type == 'n');
     REQUIRE(synset.gloss == " a general concept formed by extracting common features from specific examples");
 }
 
@@ -149,7 +149,7 @@ TEST_CASE("read synset with hexadecimal word count", "[synset]") {
     auto stream = std::istringstream(oneSynsetHexadecimalWordCount);
     Synset synset = loadSynset(stream, 0);
     REQUIRE(synset.offset == 0);
-    REQUIRE(synset.type == Synset::Verb);
+    REQUIRE(synset.type == 'v');
     REQUIRE(synset.words.size() == 0x0d);
 }
 
@@ -157,7 +157,7 @@ TEST_CASE("read synset with hexadecimal lex id", "[synset]") {
     auto stream = std::istringstream(oneSynsetHexadecimalLexId);
     Synset synset = loadSynset(stream, 0);
     REQUIRE(synset.offset == 0);
-    REQUIRE(synset.type == Synset::Verb);
+    REQUIRE(synset.type == 'v');
     REQUIRE(synset.words.size() == 1);
     REQUIRE(synset.gloss == std::string(" move about freely and without restraint, or act as if running around in an uncontrolled way; \"who are these people running around in the building?\"; \"She runs around telling everyone of her troubles\"; \"let the dogs run free\" "));
 }
