@@ -6,21 +6,21 @@
 #include <map>
 
 using SynsetOffset = unsigned int;
-using POS = char;
+using PartOfSpeech = char;
 
 using SynsetOffsets = std::vector<SynsetOffset>;
 using SynsetIdentifier = std::pair<char, SynsetOffset>;
 
 struct LemmaIndexItem {
     std::string lemma;
-    POS pos;
+    PartOfSpeech pos;
     SynsetOffsets synsets;
 };
 
 struct SynsetPointer {
     std::string type;
     SynsetOffset offset;
-    POS pos;
+    PartOfSpeech pos;
     int sourceTarget;
 
     SynsetIdentifier pointedToId() const {

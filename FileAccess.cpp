@@ -183,11 +183,11 @@ std::ostream &operator<<(std::ostream &stream, const std::vector<std::string> &w
 }
 
 namespace {
-    static const std::map<std::string, std::string> posToSuffix{
-            {"n", "noun"},
-            {"a", "adj"},
-            {"r", "adv"},
-            {"v", "verb"}
+    static const std::map<PartOfSpeech, std::string> posToSuffix{
+            {'n', "noun"},
+            {'a', "adj"},
+            {'r', "adv"},
+            {'v', "verb"}
     };
 }
 
@@ -197,13 +197,13 @@ FileAccess::FileAccess(std::string folder)
 
 }
 
-std::istream &FileAccess::indexFileForPos(const std::string &pos)
+std::istream &FileAccess::indexFileForPos(PartOfSpeech pos)
 {
     const auto fileName = std::string("index.") + posToSuffix.at(pos);
     return fromCache(fileName);
 }
 
-std::istream &FileAccess::dataFileForPos(const std::string &pos)
+std::istream &FileAccess::dataFileForPos(PartOfSpeech pos)
 {
     const auto fileName = std::string("data.") + posToSuffix.at(pos);
     return fromCache(fileName);

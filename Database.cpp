@@ -6,10 +6,10 @@
 Database::Database(FileAccess &files)
     : mFiles(files)
 {
-    loadSynsetsForPos("n");
-    loadSynsetsForPos("a");
-    loadSynsetsForPos("v");
-    loadSynsetsForPos("r");
+    loadSynsetsForPos('n');
+    loadSynsetsForPos('a');
+    loadSynsetsForPos('v');
+    loadSynsetsForPos('r');
 }
 
 std::set<OtherSynsetIdAndPointer> Database::synsetsPointingAt(Synset *synset) {
@@ -20,7 +20,7 @@ Synset *Database::synsetByIdentifier(SynsetIdentifier identifier) {
     return mSynsetsByIndex[identifier.first][identifier.second];
 }
 
-std::vector<Synset> Database::synsetsByIndexWord(const std::string &pos, std::string index_word)
+std::vector<Synset> Database::synsetsByIndexWord(PartOfSpeech pos, std::string index_word)
 {
     // TODO create cache
     LemmaIndex index;
@@ -33,7 +33,7 @@ std::vector<Synset> Database::synsetsByIndexWord(const std::string &pos, std::st
     std::vector<Synset> synsets;
     synsets.reserve(indexItem->synsets.size());
     for (const SynsetOffset offset : indexItem->synsets) {
-        synsets.push_back(*synsetByIdentifier(std::make_pair(pos[0], offset)));
+        synsets.push_back(*synsetByIdentifier(std::make_pair(pos, offset)));
     }
 
     return synsets;
@@ -114,16 +114,16 @@ std::vector<OtherSynsetIdAndPointer> Database::shortestPath(SynsetIdentifier ori
     }
 }
 
-void Database::loadSynsetsForPos(const std::string &pos)
+void Database::loadSynsetsForPos(PartOfSpeech pos)
 {
     auto &database = mFiles.dataFileForPos(pos);
 
-    database >> mSynsets[pos[0]];
+    database >> mSynsets[pos];
 
-    for (Synset &synset : mSynsets[pos[0]]) {
-        mSynsetsByIndex[pos[0]].insert(std::make_pair(synset.offset, &synset));
+    for (Synset &synset : mSynsets[pos]) {
+        mSynsetsByIndex[pos].insert(std::make_pair(synset.offset, &synset));
 
-        SynsetIdentifier synsetIdentifier = std::make_pair(pos[0], synset.offset);
+        SynsetIdentifier synsetIdentifier = std::make_pair(pos, synset.offset);
         for (SynsetPointer &pointer : synset.pointers) {
             SynsetIdentifier targetIdentifier = pointer.pointedToId();
             mSynsetByPointingAt[targetIdentifier].insert(std::make_pair(synsetIdentifier, &pointer));

@@ -14,13 +14,13 @@ public:
 public:
     std::set<OtherSynsetIdAndPointer> synsetsPointingAt(Synset *synset);
     Synset *synsetByIdentifier(SynsetIdentifier identifier);
-    std::vector<Synset> synsetsByIndexWord(const std::string &pos, std::string index_word);
+    std::vector<Synset> synsetsByIndexWord(PartOfSpeech pos, std::string index_word);
 
     std::vector<OtherSynsetIdAndPointer> connectedSynsets(SynsetIdentifier ownId, Direction = Both);
     std::vector<OtherSynsetIdAndPointer> shortestPath(SynsetIdentifier origin, SynsetIdentifier target, bool directed = false);
 
 private:
-    void loadSynsetsForPos(const std::string &pos);
+    void loadSynsetsForPos(PartOfSpeech pos);
 
 private:
     FileAccess &mFiles;

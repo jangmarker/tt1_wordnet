@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
     Database database(fileAccess);
 
     if (*query) {
-        const auto synsets = database.synsetsByIndexWord(partOfSpeech, indexWord);
+        const auto synsets = database.synsetsByIndexWord(partOfSpeech[0], indexWord);
 
         if (synsets.empty()) {
             std::cout << "Could not find " << indexWord << std::endl;

@@ -47,8 +47,8 @@ public:
     explicit FileAccess(std::string folder);
 
 public:
-    std::istream &indexFileForPos(const std::string &pos);
-    std::istream &dataFileForPos(const std::string &pos);
+    std::istream &indexFileForPos(PartOfSpeech pos);
+    std::istream &dataFileForPos(PartOfSpeech pos);
 
 private:
     std::istream &fromCache(std::string fileName);
