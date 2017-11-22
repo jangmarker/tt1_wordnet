@@ -7,5 +7,5 @@ build_script:
   - cmake --build .
 
 artifacts:
-  - path: build/tt1_wordnet.exe
-    name: tt1_wordnet.exe
+  - path: build/*.exe
+    name: executables
