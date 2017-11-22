@@ -37,6 +37,7 @@ std::istream &operator>>(std::istream &stream, std::vector<LineItem> &list)
 
 std::ostream &operator<<(std::ostream &stream, const Synset &synset);
 std::ostream &operator<<(std::ostream &stream, const SynsetPointer &synsetPointer);
+std::ostream &operator<<(std::ostream &stream, const std::vector<std::string>& words);
 
 class FileAccess {
 

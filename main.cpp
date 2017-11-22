@@ -43,10 +43,7 @@ int main(int argc, char** argv) {
             for (const auto &synset : synsets) {
                 std::cout << synset << std::endl;
                 if (*full) {
-                    for (auto &word : synset.words) {
-                        // TODO output word type
-                        std::cout << '\t' << word << std::endl;
-                    }
+                    std::cout << synset.words << std::endl;
                 }
             }
         }
@@ -62,6 +59,9 @@ int main(int argc, char** argv) {
                 const Synset &pointedAtSynset = database.synsetByOffset(pos_to_str[synsetPointer.pos], synsetPointer.offset);
 
                 std::cout << synsetPointer << " " << pointedAtSynset << std::endl;
+                if (*semrelsFull) {
+                    std::cout << pointedAtSynset.words << std::endl;
+                }
             }
         }
 
@@ -72,6 +72,9 @@ int main(int argc, char** argv) {
                     // TODO eliminate duplicates in any
                     const Synset &originSynset = database.synsetByIdentifier(incomingSynset.first);
                     std::cout << (*incomingSynset.second) << " " << originSynset << std::endl;
+                    if (*semrelsFull) {
+                        std::cout << originSynset.words << std::endl;
+                    }
                 }
             }
         }

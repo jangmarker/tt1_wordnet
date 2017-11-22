@@ -138,6 +138,15 @@ std::ostream &operator<<(std::ostream &stream, const SynsetPointer &synsetPointe
            << "(TODO)";
 }
 
+std::ostream &operator<<(std::ostream &stream, const std::vector<std::string> &words)
+{
+    for (auto &word : words) {
+        // TODO output word type
+        stream << '\t' << word << std::endl;
+    }
+    return stream;
+}
+
 namespace {
     static const std::map<std::string, std::string> posToSuffix{
             {"n", "noun"},
