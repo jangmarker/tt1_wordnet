@@ -3,3 +3,7 @@ build_script:
   - cd build
   - cmake ..
   - cmake --build .
+
+artifacts:
+  - path: build/tt1_wordnet.exe
+    name: tt1_wordnet.exe
