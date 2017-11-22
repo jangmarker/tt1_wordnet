@@ -9,6 +9,7 @@ using SynsetOffset = unsigned int;
 using POS = char;
 
 using SynsetOffsets = std::vector<SynsetOffset>;
+using SynsetIdentifier = std::pair<char, SynsetOffset>;
 
 struct LemmaIndexItem {
     std::string lemma;
@@ -21,9 +22,12 @@ struct SynsetPointer {
     SynsetOffset offset;
     POS pos;
     int sourceTarget;
+
+    SynsetIdentifier pointedToId() const {
+        return std::make_pair(pos, offset);
+    }
 };
 
-using SynsetIdentifier = std::pair<char, SynsetOffset>;
 using OtherSynsetIdAndPointer = std::pair<SynsetIdentifier, SynsetPointer*>;
 using SynsetType = char;
 
