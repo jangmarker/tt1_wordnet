@@ -18,6 +18,9 @@ int main(int argc, char** argv) {
     std::string relationDirection;
     unsigned int offset;
 
+    std::string partOfSpeech2;
+    unsigned int offset2;
+
     auto* query = app.add_subcommand("query");
     query->add_set("--pos", partOfSpeech, partOfSpeechOptions, "Part of speech")->required();
     query->add_option("--iw", indexWord, "Index word")->required();
@@ -28,6 +31,14 @@ int main(int argc, char** argv) {
     semrels->add_option("--offset", offset, "Offset")->required();
     semrels->add_set("--dir", relationDirection, {"in", "out", "any"}, "Relation direction")->required();
     auto semrelsFull = semrels->add_flag("--full", "Show index words for all connected synsets");
+
+    auto* shortestpath = app.add_subcommand("shortestpath");
+    shortestpath->add_set("--pos1", partOfSpeech, partOfSpeechOptions, "Part of speech")->required();
+    shortestpath->add_option("--offset1", offset, "Offset")->required();
+    shortestpath->add_set("--pos2", partOfSpeech2, partOfSpeechOptions, "Target part of speech")->required();
+    shortestpath->add_option("--offset2", offset2, "Target offset")->required();
+    auto shortestpathDirected = shortestpath->add_flag("--directed", "Only search directed");
+    auto shortestpathFull = shortestpath->add_flag("--full", "Show index words for all connected synsets");
 
     CLI11_PARSE(app, argc, argv);
 
@@ -52,32 +63,20 @@ int main(int argc, char** argv) {
 
         const auto is_semantic = [](const SynsetPointer &pointer) { return pointer.sourceTarget == 0; };
 
-        if (relationDirection != "in") {
-            std::vector<SynsetPointer> outgoing;
-            std::copy_if(synset.pointers.begin(), synset.pointers.end(), std::back_inserter(outgoing), is_semantic);
-            for (SynsetPointer &synsetPointer : outgoing) {
-                const Synset &pointedAtSynset = database.synsetByOffset(pos_to_str[synsetPointer.pos], synsetPointer.offset);
+        Database::Direction direction = relationDirection == "any" ? Database::Both :
+                                        relationDirection == "in" ? Database::Incoming : Database::Outgoing;
+        SynsetIdentifier originIdentifier = std::make_pair(pos_to_str[synset->type][0], synset->offset);
+        std::vector<OtherSynsetIdAndPointer> connected = database.connectedSynsets(originIdentifier, direction);
 
-                std::cout << synsetPointer << " " << pointedAtSynset << std::endl;
-                if (*semrelsFull) {
-                    std::cout << pointedAtSynset.words << std::endl;
-                }
+        for (const OtherSynsetIdAndPointer &otherSynsetIdAndPointer : connected) {
+            if (is_semantic(*otherSynsetIdAndPointer.second)) {
+                Synset *otherSynset = database.synsetByIdentifier(otherSynsetIdAndPointer.first);
+                std::cout << *(otherSynsetIdAndPointer.second) << " " << *otherSynset << std::endl;
+                if (*semrelsFull)
+                    std::cout << otherSynset->words << std::endl;
             }
         }
-
-        if (relationDirection != "out") {
-            std::set<std::pair<SynsetIdentifier, SynsetPointer *>> incomingSynsets = database.synsetsPointingAt(synset);
-            for (auto &incomingSynset : incomingSynsets) {
-                if (is_semantic(*incomingSynset.second)) {
-                    // TODO eliminate duplicates in any
-                    const Synset &originSynset = database.synsetByIdentifier(incomingSynset.first);
-                    std::cout << (*incomingSynset.second) << " " << originSynset << std::endl;
-                    if (*semrelsFull) {
-                        std::cout << originSynset.words << std::endl;
-                    }
-                }
-            }
-        }
+    } else if (*shortestpath) {
 
     }
 
