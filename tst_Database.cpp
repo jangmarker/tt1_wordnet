@@ -5,6 +5,7 @@
 #include <string>
 
 const char *calculator("calculator n 2 3 @ ~ + 2 0 09887034 02938886  ");
+const char *word("word n 10 6 @ ~ #p %p + - 10 6 06286395 06738162 06642138 07169242 07140659 07227301 13627327 09537144 06674188 06431740  ");
 const char *licenseHeader = R"HEADER(
   1 This software and database is being provided to you, the LICENSEE, by
   2 Princeton University under the following license.  By obtaining, using
@@ -82,6 +83,20 @@ TEST_CASE("parse calculator index line", "[index]") {
     REQUIRE(index[0].synsets.size() == 2);
     REQUIRE(index[0].synsets[0] == 9887034);
     REQUIRE(index[0].synsets[1] == 2938886);
+}
+
+TEST_CASE("parse word index line", "[index]") {
+    LemmaIndex  index;
+    auto stream = std::istringstream(word);
+    stream >> index;
+    REQUIRE(index.size() == 1);
+    REQUIRE(index[0].lemma == std::string("word"));
+    REQUIRE(index[0].synsets.size() == 10);
+    REQUIRE(index[0].synsets == SynsetOffsets{
+                                    6286395, 6738162, 6642138, 7169242,
+                                    7140659, 7227301, 13627327, 9537144,
+                                    6674188, 6431740
+                                });
 }
 
 TEST_CASE("skip license header", "[index]") {

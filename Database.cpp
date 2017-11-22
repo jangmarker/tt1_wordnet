@@ -9,7 +9,7 @@ std::istream &operator>>(std::istream &stream, LemmaIndexItem &index)
     std::string pos;
     int synsetCount;
     int _ptrCount;
-    char _ptrSymbol;
+    std::string _ptrSymbol;
     int _senseCount;
     int _tagSenseCount;
     SynsetOffset offset;
