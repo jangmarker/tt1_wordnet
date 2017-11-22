@@ -15,7 +15,7 @@ Database::Database(FileAccess &files)
 }
 
 std::set<OtherSynsetIdAndPointer> Database::synsetsPointingAt(const Synset &synset) {
-    SynsetIdentifier identifier = std::make_pair(pos_to_str[synset.type][0], synset.offset);
+    SynsetIdentifier identifier = std::make_pair(synset.type, synset.offset);
     return mSynsetByPointingAt[identifier];
 }
 
@@ -56,7 +56,7 @@ std::vector<OtherSynsetIdAndPointer> Database::connectedSynsets(SynsetIdentifier
 
     if (direction & Database::Outgoing) {
         for (SynsetPointer &synsetPointer : self->pointers)
-            connected.emplace_back(std::make_pair(pos_to_str[synsetPointer.pos][0], synsetPointer.offset), &synsetPointer);
+            connected.emplace_back(std::make_pair(synsetPointer.pos, synsetPointer.offset), &synsetPointer);
     }
 
     if (direction & Database::Incoming) {
@@ -73,39 +73,46 @@ std::ostream &operator<<(std::ostream &stream, const SynsetIdentifier &id)
     stream << id.first << " " << id.second;
 }
 
-std::vector<SynsetIdentifier> Database::shortestPath(SynsetIdentifier origin, SynsetIdentifier target)
+std::vector<SynsetIdentifier> Database::shortestPath(SynsetIdentifier origin, SynsetIdentifier target, bool directed)
 {
     const SynsetIdentifier nullId = std::make_pair('0', 0);
     std::map<SynsetIdentifier, int> distance;
     std::map<SynsetIdentifier, SynsetIdentifier> previous;
 
     const auto smallestOnTop = [&distance](const SynsetIdentifier& a, const SynsetIdentifier& b) -> bool {
-        return distance[a] > distance[b];
+        if (distance[a] == distance[b]) {
+            // to assure absolute order
+            if (a.second == b.second) {
+                return a.first < b.first;
+            }
+            return a.second < b.second;
+        }
+        return distance[a] < distance[b];
     };
-    searchable_queue<SynsetIdentifier, std::vector<SynsetIdentifier>, decltype(smallestOnTop)> nodes(smallestOnTop);
+    std::set<SynsetIdentifier, decltype(smallestOnTop)> nodes(smallestOnTop);
     for (auto& db : mSynsets) {
         for (Synset& synset : db.second) {
             SynsetIdentifier id = std::make_pair(db.first, synset.offset);
-            distance[id] = id == origin ? 0 : std::numeric_limits<int>::max();
+            distance[id] = (id == origin) ? 0 : std::numeric_limits<int>::max();
             previous[id] = nullId;
-            nodes.push(id);
+            nodes.insert(id);
         }
     }
 
-    std::cout << "target " << target << std::endl;
     while (!nodes.empty()) {
-        SynsetIdentifier current = nodes.top();
-        nodes.pop();
-        std::cout << "current " << current << " " << distance[current] << std::endl;
-        // TODO directed/undirected
-        for (const OtherSynsetIdAndPointer& neighborAndEdge : connectedSynsets(current)) {
+        SynsetIdentifier current = *nodes.begin();
+        nodes.erase(current);
+        Direction direction = directed ? Outgoing : Both;
+        for (const OtherSynsetIdAndPointer& neighborAndEdge : connectedSynsets(current, direction)) {
             SynsetIdentifier neighbor = neighborAndEdge.first;
-            if (nodes.find(neighbor) != nodes.cend()) {
-                auto new_distance = distance[current] + 1;
+            if (nodes.find(neighbor) != nodes.end()) {
+                auto new_distance = distance[current] == std::numeric_limits<int>::max() ? distance[current]
+                                                                                         : (distance[current] + 1);
                 if (new_distance < distance[neighbor]) {
                     distance[neighbor] = new_distance;
                     previous[neighbor] = current;
-                    nodes.update();
+                    nodes.erase(neighbor);
+                    nodes.insert(neighbor);
                 }
             }
             if (current == target) {
@@ -132,7 +139,7 @@ void Database::loadSynsetsForPos(const std::string &pos)
 
         SynsetIdentifier synsetIdentifier = std::make_pair(pos[0], synset.offset);
         for (SynsetPointer &pointer : synset.pointers) {
-            SynsetIdentifier targetIdentifier = std::make_pair(pos_to_str[pointer.pos][0], pointer.offset);
+            SynsetIdentifier targetIdentifier = std::make_pair(pointer.pos, pointer.offset);
             mSynsetByPointingAt[targetIdentifier].insert(std::make_pair(synsetIdentifier, &pointer));
         }
     }

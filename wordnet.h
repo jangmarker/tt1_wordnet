@@ -6,22 +6,7 @@
 #include <map>
 
 using SynsetOffset = unsigned int;
-
-enum POS {
-    Pos_Noun,
-    Pos_Verb,
-    Pos_Adjective,
-    Pos_Adverb
-};
-
-static const std::map<std::string, POS> str_to_pos{
-        {"n", POS::Pos_Noun},
-        {"v", POS::Pos_Verb},
-        {"a", POS::Pos_Adjective},
-        {"r", POS::Pos_Adverb},
-};
-
-static const std::vector<std::string> pos_to_str{{"n"}, {"v"}, {"a"}, {"r"}};
+using POS = char;
 
 using SynsetOffsets = std::vector<SynsetOffset>;
 
@@ -38,14 +23,9 @@ struct SynsetPointer {
     int sourceTarget;
 };
 
+using SynsetType = char;
+
 struct Synset {
-    enum SynsetType {
-        Noun,
-        Verb,
-        Adjective,
-        AdjectiveSatellite,
-        Adverb
-    };
 
     SynsetOffset offset;
     int lexFileNumber;
@@ -56,13 +36,5 @@ struct Synset {
 };
 
 using SynsetDatabase = std::vector<Synset>;
-
-static const std::map<std::string, Synset::SynsetType> synsettype_map{
-        {"n", Synset::Noun},
-        {"v", Synset::Verb},
-        {"a", Synset::Adjective},
-        {"s", Synset::AdjectiveSatellite},
-        {"r", Synset::Adverb},
-};
 
 #endif //TT1_WORDNET_WORDNET_H_H
