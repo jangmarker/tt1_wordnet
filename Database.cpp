@@ -108,18 +108,18 @@ std::istream &operator>>(std::istream &stream, Synset &synset)
     std::vector<SynsetPointer> pointers;
     std::string gloss;
 
-    synsetLine >> offset >> lexFileNumber >> type >> wordCount;
+    synsetLine >> offset >> lexFileNumber >> type >> std::hex >> wordCount >> std::dec;
 
-    words.resize(wordCount);
+    words.reserve(wordCount);
     for (int i = 0; i < wordCount; ++i) {
-        synsetLine >> _word >> _lexId;
+        synsetLine >> _word >> std::hex >> _lexId >> std::dec;
         // TODO strip adjective's (...)
         words.push_back(_word);
     }
 
     synsetLine >> pointerCount;
 
-    pointers.resize(pointerCount);
+    pointers.reserve(pointerCount);
     for (int i = 0; i > pointerCount; ++i) {
         synsetLine >> (pointers.emplace_back());
     }
