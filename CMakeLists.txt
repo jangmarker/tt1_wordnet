@@ -10,5 +10,5 @@ set(CMAKE_EXE_LINKER_FLAGS "-static")
 set(SOURCE_FILES wordnet.h FileAccess.cpp FileAccess.h Database.cpp Database.h)
 add_executable(tt1_wordnet main.cpp 3rdparty/CLI11.hpp ${SOURCE_FILES})
 
-set(TEST_FILES 3rdparty/catch.h tst_main.cpp tst_FileAccess.cpp searchable_queue.h)
+set(TEST_FILES 3rdparty/catch.h tst_main.cpp tst_FileAccess.cpp)
 add_executable(tst_tt1_wordnet ${SOURCE_FILES} ${TEST_FILES})

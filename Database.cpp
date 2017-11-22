@@ -1,7 +1,5 @@
 #include "Database.h"
 
-#include "searchable_queue.h"
-
 #include <algorithm>
 #include <iostream>
 
@@ -67,11 +65,6 @@ std::vector<OtherSynsetIdAndPointer> Database::connectedSynsets(SynsetIdentifier
 
     return connected;
 };
-
-std::ostream &operator<<(std::ostream &stream, const SynsetIdentifier &id)
-{
-    stream << id.first << " " << id.second;
-}
 
 std::vector<OtherSynsetIdAndPointer> Database::shortestPath(SynsetIdentifier origin, SynsetIdentifier target, bool directed)
 {
