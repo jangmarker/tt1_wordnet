@@ -3,74 +3,100 @@
 #include <sstream>
 #include <string>
 
-namespace {
-    LemmaIndex parseIndexLine(const std::string &line)
-    {
-        std::istringstream indexLine(line);
+std::istream &operator>>(std::istream &stream, LemmaIndex &index)
+{
+    std::string lemma;
+    std::string pos;
+    int synsetCount;
+    int _ptrCount;
+    char _ptrSymbol;
+    int _senseCount;
+    int _tagSenseCount;
+    SynsetOffset offset;
 
-        std::string lemma;
-        std::string pos;
-        int synsetCount;
-        int _ptrCount;
-        char _ptrSymbol;
-        int _senseCount;
-        int _tagSenseCount;
-        SynsetOffset offset;
-
-        indexLine >> lemma >> pos >> synsetCount >> _ptrCount;
+    std::string lineString;
+    if (std::getline(stream, lineString)) {
+        std::istringstream line(lineString);
+        line >> lemma >> pos >> synsetCount >> _ptrCount;
 
         for (int i = 0; i < _ptrCount; ++i)
-            indexLine >> _ptrSymbol;
+            line >> _ptrSymbol;
 
-        indexLine >> _senseCount >> _tagSenseCount;
+        line >> _senseCount >> _tagSenseCount;
 
         SynsetOffsets offsets;
         for (int i = 0; i < synsetCount; ++i) {
-            indexLine >> offset;
+            line >> offset;
             offsets.push_back(offset);
         }
 
-        return {lemma, pos_map.at(pos), offsets};
+        index.lemma = lemma;
+        index.pos = pos_map.at(pos);
+        index.synsets = offsets;
     }
 
-    SynsetPointer parsePointer(std::istringstream &synsetLine)
-    {
-        std::string pointerSymbol;
-        SynsetOffset synsetOffset;
-        std::string pos;
-        int sourceTarget;
-
-        synsetLine >> pointerSymbol >> synsetOffset >> pos >> sourceTarget;
-
-        return {SynsetPointer::Unkown, synsetOffset, pos_map.at(pos)};
-    }
+    return stream;
 }
 
-// TODO implement as operator>> overloads
-
-Index loadIndex(std::istream &data)
+std::istream &operator>>(std::istream &stream, Index &index)
 {
-    Index index;
-    std::string line;
-    while (std::getline(data, line)) {
-        if (line.empty() || line[0] == ' ')
-            continue;
+    index.clear();
 
-        index.push_back(parseIndexLine(line));
+    std::string line;
+    auto pos = stream.tellg();
+    while (std::getline(stream, line)) {
+        if (!line.empty() && line[0] != ' ') {
+            stream.seekg(pos, std::ios_base::beg);
+            break;
+        }
+        pos = stream.tellg();
+    };
+
+    while (stream.peek() != EOF) {
+        stream >> (index.emplace_back());
     }
 
-    return index;
+    return stream;
 }
 
 Synset loadSynset(std::istream &data, SynsetOffset targetOffset) {
+    Synset synset;
+
     data.seekg(targetOffset);
+    data >> synset;
+
+    if (synset.offset != targetOffset)
+        throw "Offsets don't match";
+
+    return synset;
+}
+
+std::istream &operator>>(std::istream &stream, SynsetPointer &pointer)
+{
+    std::string pointerSymbol;
+    SynsetOffset synsetOffset;
+    std::string pos;
+    int sourceTarget;
+
+    stream >> pointerSymbol >> synsetOffset >> pos >> sourceTarget;
+
+    pointer.type = SynsetPointer::Unkown; // TODO from pointerSymbol
+    pointer.offset = synsetOffset;
+    pointer.pos = pos_map.at(pos);
+
+    return stream;
+}
+
+std::istream &operator>>(std::istream &stream, Synset &synset)
+{
     std::string line;
-    std::getline(data, line);
+    std::getline(stream, line);
 
     if (line.empty())
         throw "Could not find offset";
 
     auto synsetLine = std::istringstream(line);
+
     SynsetOffset offset;
     int lexFileNumber;
     std::string type;
@@ -84,9 +110,6 @@ Synset loadSynset(std::istream &data, SynsetOffset targetOffset) {
 
     synsetLine >> offset >> lexFileNumber >> type >> wordCount;
 
-    if (offset != targetOffset)
-        throw "Offsets don't match";
-
     words.resize(wordCount);
     for (int i = 0; i < wordCount; ++i) {
         synsetLine >> _word >> _lexId;
@@ -98,7 +121,7 @@ Synset loadSynset(std::istream &data, SynsetOffset targetOffset) {
 
     pointers.resize(pointerCount);
     for (int i = 0; i > pointerCount; ++i) {
-        pointers.push_back(parsePointer(synsetLine));
+        synsetLine >> (pointers.emplace_back());
     }
 
     while (gloss != "|")
@@ -107,12 +130,12 @@ Synset loadSynset(std::istream &data, SynsetOffset targetOffset) {
     // TODO trim?
     std::getline(synsetLine, gloss);
 
-    return {
-        offset,
-        lexFileNumber,
-        synsettype_map.at(type),
-        words,
-        pointers,
-        gloss
-    };
+    synset.offset = offset;
+    synset.lexFileNumber = lexFileNumber;
+    synset.type = synsettype_map.at(type);
+    synset.words = words;
+    synset.pointers = pointers;
+    synset.gloss = gloss;
+
+    return stream;
 }

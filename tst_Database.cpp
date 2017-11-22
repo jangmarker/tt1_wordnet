@@ -73,8 +73,9 @@ const char *oneSynsetWithHeader = \
 "00002137 03 n 02 abstraction 0 abstract_entity 0 010 @ 00001740 n 0000 + 00692329 v 0101 ~ 00023100 n 0000 ~ 00024264 n 0000 ~ 00031264 n 0000 ~ 00031921 n 0000 ~ 00033020 n 0000 ~ 00033615 n 0000 ~ 05810143 n 0000 ~ 07999699 n 0000 | a general concept formed by extracting common features from specific examples\n";
 
 TEST_CASE("parse calculator index line", "[index]") {
-    auto calculator_stream = std::istringstream(calculator);
-    const Index index = loadIndex(calculator_stream);
+    Index index;
+    auto stream = std::istringstream(calculator);
+    stream >> index;
     REQUIRE(index.size() == 1);
     REQUIRE(index[0].lemma == std::string("calculator"));
     REQUIRE(index[0].pos == POS::Pos_Noun);
@@ -84,8 +85,9 @@ TEST_CASE("parse calculator index line", "[index]") {
 }
 
 TEST_CASE("skip license header", "[index]") {
-    auto header_stream = std::istringstream(licenseHeader);
-    const Index index = loadIndex(header_stream);
+    Index index;
+    auto stream = std::istringstream(licenseHeader);
+    stream >> index;
     REQUIRE(index.empty());
 }
 
