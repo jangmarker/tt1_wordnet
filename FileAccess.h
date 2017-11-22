@@ -8,11 +8,32 @@
 using LemmaIndex = std::vector<LemmaIndexItem>;
 
 std::istream &operator>>(std::istream &stream, LemmaIndexItem &index);
-std::istream &operator>>(std::istream &stream, LemmaIndex &index);
 
 Synset loadSynset(std::istream& data, SynsetOffset targetOffset);
 std::istream &operator>>(std::istream &stream, SynsetPointer &pointer);
 std::istream &operator>>(std::istream &stream, Synset &synset);
+
+template<class LineItem>
+std::istream &operator>>(std::istream &stream, std::vector<LineItem> &list)
+{
+    list.clear();
+
+    std::string line;
+    auto pos = stream.tellg();
+    while (std::getline(stream, line)) {
+        if (!line.empty() && line[0] != ' ') {
+            stream.seekg(pos, std::ios_base::beg);
+            break;
+        }
+        pos = stream.tellg();
+    };
+
+    while (stream.peek() != EOF) {
+        stream >> (list.emplace_back());
+    }
+
+    return stream;
+}
 
 class FileAccess {
 
@@ -20,8 +41,8 @@ public:
     explicit FileAccess(std::string folder);
 
 public:
-    std::istream &indexFileForPos(std::string pos);
-    std::istream &dataFileForPos(std::string pos);
+    std::istream &indexFileForPos(const std::string &pos);
+    std::istream &dataFileForPos(const std::string &pos);
 
 private:
     std::istream &fromCache(std::string fileName);

@@ -38,27 +38,6 @@ std::istream &operator>>(std::istream &stream, LemmaIndexItem &index)
     return stream;
 }
 
-std::istream &operator>>(std::istream &stream, LemmaIndex &index)
-{
-    index.clear();
-
-    std::string line;
-    auto pos = stream.tellg();
-    while (std::getline(stream, line)) {
-        if (!line.empty() && line[0] != ' ') {
-            stream.seekg(pos, std::ios_base::beg);
-            break;
-        }
-        pos = stream.tellg();
-    };
-
-    while (stream.peek() != EOF) {
-        stream >> (index.emplace_back());
-    }
-
-    return stream;
-}
-
 Synset loadSynset(std::istream &data, SynsetOffset targetOffset) {
     Synset synset;
 
@@ -80,9 +59,10 @@ std::istream &operator>>(std::istream &stream, SynsetPointer &pointer)
 
     stream >> pointerSymbol >> synsetOffset >> pos >> sourceTarget;
 
-    pointer.type = SynsetPointer::Unkown; // TODO from pointerSymbol
+    pointer.type = pointerSymbol;
     pointer.offset = synsetOffset;
     pointer.pos = str_to_pos.at(pos);
+    pointer.sourceTarget = sourceTarget;
 
     return stream;
 }
@@ -155,13 +135,13 @@ FileAccess::FileAccess(std::string folder)
 
 }
 
-std::istream &FileAccess::indexFileForPos(std::string pos)
+std::istream &FileAccess::indexFileForPos(const std::string &pos)
 {
     const auto fileName = std::string("index.") + posToSuffix.at(pos);
     return fromCache(fileName);
 }
 
-std::istream &FileAccess::dataFileForPos(std::string pos)
+std::istream &FileAccess::dataFileForPos(const std::string &pos)
 {
     const auto fileName = std::string("data.") + posToSuffix.at(pos);
     return fromCache(fileName);

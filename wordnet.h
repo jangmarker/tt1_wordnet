@@ -32,13 +32,10 @@ struct LemmaIndexItem {
 };
 
 struct SynsetPointer {
-    enum PointerType {
-        Unkown // TODO
-    };
-
-    PointerType type;
+    std::string type;
     SynsetOffset offset;
     POS pos;
+    int sourceTarget;
 };
 
 struct Synset {
@@ -57,6 +54,8 @@ struct Synset {
     std::vector<SynsetPointer> pointers;
     std::string gloss;
 };
+
+using SynsetDatabase = std::vector<Synset>;
 
 static const std::map<std::string, Synset::SynsetType> synsettype_map{
         {"n", Synset::Noun},
