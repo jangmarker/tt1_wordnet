@@ -32,7 +32,31 @@ struct SynsetPointer {
     }
 };
 
-using OtherSynsetIdAndPointer = std::pair<SynsetIdentifier, SynsetPointer*>;
+struct SynsetConnection {
+
+    SynsetConnection() = default;
+
+    SynsetConnection(const SynsetIdentifier &otherId, SynsetPointer *pointer)
+        : otherId(otherId)
+        , pointer(pointer)
+    { }
+
+    SynsetIdentifier otherId = std::make_pair('\0', 0);
+    SynsetPointer *pointer = nullptr;
+
+    bool operator==(const SynsetConnection &other) const {
+        return other.otherId == otherId && other.pointer == pointer;
+    }
+
+    bool operator!=(const SynsetConnection &other) const {
+        return !(*this == other);
+    }
+
+    bool operator<(const SynsetConnection &other) const {
+        return this->otherId < other.otherId && this->pointer->offset < other.pointer->offset
+                                             && this->pointer->pos < other.pointer->pos;
+    }
+};
 using SynsetType = char;
 
 struct Synset {

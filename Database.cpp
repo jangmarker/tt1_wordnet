@@ -12,7 +12,7 @@ Database::Database(FileAccess &files)
     loadSynsetsForPos('r');
 }
 
-std::set<OtherSynsetIdAndPointer> Database::synsetsPointingAt(Synset *synset) {
+std::set<SynsetConnection> Database::synsetsPointingAt(Synset *synset) {
     return mSynsetByPointingAt[synset->id()];
 }
 
@@ -39,9 +39,9 @@ std::vector<Synset> Database::synsetsByIndexWord(PartOfSpeech pos, std::string i
     return synsets;
 }
 
-std::vector<OtherSynsetIdAndPointer> Database::connectedSynsets(SynsetIdentifier ownId, Database::Direction direction)
+std::vector<SynsetConnection> Database::connectedSynsets(SynsetIdentifier ownId, Database::Direction direction)
 {
-    std::vector<OtherSynsetIdAndPointer> connected;
+    std::vector<SynsetConnection> connected;
 
     Synset *self = synsetByIdentifier(ownId);
 
@@ -51,7 +51,7 @@ std::vector<OtherSynsetIdAndPointer> Database::connectedSynsets(SynsetIdentifier
     }
 
     if (direction & Database::Incoming) {
-        std::set<OtherSynsetIdAndPointer> synsetsPointingAtSelf = synsetsPointingAt(self);
+        std::set<SynsetConnection> synsetsPointingAtSelf = synsetsPointingAt(self);
         connected.reserve(connected.size() + synsetsPointingAtSelf.size());
         std::copy(synsetsPointingAtSelf.begin(), synsetsPointingAtSelf.end(), std::back_inserter(connected));
     }
@@ -59,11 +59,11 @@ std::vector<OtherSynsetIdAndPointer> Database::connectedSynsets(SynsetIdentifier
     return connected;
 };
 
-std::vector<OtherSynsetIdAndPointer> Database::shortestPath(SynsetIdentifier origin, SynsetIdentifier target, bool directed)
+std::vector<SynsetConnection> Database::shortestPath(SynsetIdentifier origin, SynsetIdentifier target, bool directed)
 {
-    const OtherSynsetIdAndPointer nullId = std::make_pair(std::make_pair('0', 0), nullptr);
+    const SynsetConnection nullId{std::make_pair('0', 0), nullptr};
     std::map<SynsetIdentifier, int> distance;
-    std::map<SynsetIdentifier, OtherSynsetIdAndPointer> previous;
+    std::map<SynsetIdentifier, SynsetConnection> previous;
 
     const auto smallestOnTop = [&distance](const SynsetIdentifier& a, const SynsetIdentifier& b) -> bool {
         if (distance[a] == distance[b]) {
@@ -89,24 +89,24 @@ std::vector<OtherSynsetIdAndPointer> Database::shortestPath(SynsetIdentifier ori
         SynsetIdentifier current = *nodes.begin();
         nodes.erase(current);
         Direction direction = directed ? Outgoing : Both;
-        for (const OtherSynsetIdAndPointer& neighborAndEdge : connectedSynsets(current, direction)) {
-            SynsetIdentifier neighbor = neighborAndEdge.first;
+        for (const SynsetConnection& neighborAndEdge : connectedSynsets(current, direction)) {
+            SynsetIdentifier neighbor = neighborAndEdge.otherId;
             if (nodes.find(neighbor) != nodes.end()) {
                 auto new_distance = distance[current] == std::numeric_limits<int>::max() ? distance[current]
                                                                                          : (distance[current] + 1);
                 if (new_distance < distance[neighbor]) {
                     distance[neighbor] = new_distance;
-                    previous[neighbor] = std::make_pair(current, neighborAndEdge.second);
+                    previous[neighbor] = SynsetConnection{current, neighborAndEdge.pointer};
                     nodes.erase(neighbor);
                     nodes.insert(neighbor);
                 }
             }
             if (current == target) {
-                std::vector<OtherSynsetIdAndPointer> path;
-                path.insert(path.cbegin(), std::make_pair(current, nullptr));
+                std::vector<SynsetConnection> path;
+                path.insert(path.cbegin(), SynsetConnection{current, nullptr});
                 while (previous[current] != nullId) {
                     path.insert(path.cbegin(), previous[current]);
-                    current = previous[current].first;
+                    current = previous[current].otherId;
                 }
                 return path;
             }
@@ -126,7 +126,7 @@ void Database::loadSynsetsForPos(PartOfSpeech pos)
         SynsetIdentifier synsetIdentifier = std::make_pair(pos, synset.offset);
         for (SynsetPointer &pointer : synset.pointers) {
             SynsetIdentifier targetIdentifier = pointer.pointedToId();
-            mSynsetByPointingAt[targetIdentifier].insert(std::make_pair(synsetIdentifier, &pointer));
+            mSynsetByPointingAt[targetIdentifier].insert({synsetIdentifier, &pointer});
         }
     }
 }

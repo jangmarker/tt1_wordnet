@@ -65,27 +65,27 @@ int main(int argc, char** argv) {
         Database::Direction direction = relationDirection == "any" ? Database::Both :
                                         relationDirection == "in" ? Database::Incoming : Database::Outgoing;
 
-        std::vector<OtherSynsetIdAndPointer> connected = database.connectedSynsets(origin->id(), direction);
-        for (const OtherSynsetIdAndPointer &otherSynsetIdAndPointer : connected) {
-            if (otherSynsetIdAndPointer.second->semantic()) {
-                Synset *otherSynset = database.synsetByIdentifier(otherSynsetIdAndPointer.first);
-                std::cout << *(otherSynsetIdAndPointer.second) << " " << *otherSynset << std::endl;
+        std::vector<SynsetConnection> connections = database.connectedSynsets(origin->id(), direction);
+        for (const SynsetConnection &connection : connections) {
+            if (connection.pointer->semantic()) {
+                Synset *other = database.synsetByIdentifier(connection.otherId);
+                std::cout << *(connection.pointer) << " " << *other << std::endl;
                 if (*semrelsFull)
-                    std::cout << otherSynset->words << std::endl;
+                    std::cout << other->words << std::endl;
             }
         }
     } else if (*shortestpath) {
         SynsetIdentifier origin = std::make_pair(partOfSpeech[0], offset);
         SynsetIdentifier target = std::make_pair(partOfSpeech2[0], offset2);
 
-        std::vector<OtherSynsetIdAndPointer> shortestPath = database.shortestPath(origin, target, *shortestpathDirected);
+        std::vector<SynsetConnection> shortestPath = database.shortestPath(origin, target, *shortestpathDirected);
         SynsetPointer *lastEdge = nullptr;
-        for (OtherSynsetIdAndPointer id : shortestPath) {
-            Synset *synset = database.synsetByIdentifier(id.first);
+        for (SynsetConnection connection : shortestPath) {
+            Synset *synset = database.synsetByIdentifier(connection.otherId);
             if (lastEdge)
                 std::cout << *(lastEdge) << " ";
             std::cout << *(synset) << std::endl;
-            lastEdge = id.second;
+            lastEdge = connection.pointer;
             if (*shortestpathFull)
                 std::cout << synset->words << std::endl;
         }
