@@ -23,7 +23,7 @@ static const std::map<std::string, POS> pos_map{
 
 using SynsetOffsets = std::vector<SynsetOffset>;
 
-struct LemmaIndex {
+struct LemmaIndexItem {
     std::string lemma;
     POS pos;
     SynsetOffsets synsets;

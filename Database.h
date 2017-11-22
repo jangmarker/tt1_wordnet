@@ -3,10 +3,10 @@
 
 #include "wordnet.h"
 
-using Index = std::vector<LemmaIndex>;
+using LemmaIndex = std::vector<LemmaIndexItem>;
 
+std::istream &operator>>(std::istream &stream, LemmaIndexItem &index);
 std::istream &operator>>(std::istream &stream, LemmaIndex &index);
-std::istream &operator>>(std::istream &stream, Index &index);
 
 Synset loadSynset(std::istream& data, SynsetOffset targetOffset);
 std::istream &operator>>(std::istream &stream, SynsetPointer &pointer);

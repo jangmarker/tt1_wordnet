@@ -3,7 +3,7 @@
 #include <sstream>
 #include <string>
 
-std::istream &operator>>(std::istream &stream, LemmaIndex &index)
+std::istream &operator>>(std::istream &stream, LemmaIndexItem &index)
 {
     std::string lemma;
     std::string pos;
@@ -38,7 +38,7 @@ std::istream &operator>>(std::istream &stream, LemmaIndex &index)
     return stream;
 }
 
-std::istream &operator>>(std::istream &stream, Index &index)
+std::istream &operator>>(std::istream &stream, LemmaIndex &index)
 {
     index.clear();
 
