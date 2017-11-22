@@ -5,9 +5,6 @@
 #include <set>
 #include "FileAccess.h"
 
-using SynsetIdentifier = std::pair<char, SynsetOffset>;
-using OtherSynsetIdAndPointer = std::pair<SynsetIdentifier, SynsetPointer*>;
-
 class Database {
 public:
     explicit Database(FileAccess &files);
@@ -17,11 +14,9 @@ public:
 public:
     std::set<OtherSynsetIdAndPointer> synsetsPointingAt(Synset *synset);
     Synset *synsetByIdentifier(SynsetIdentifier identifier);
-    Synset *synsetByOffset(const std::string &pos, SynsetOffset offset);
     std::vector<Synset> synsetsByIndexWord(const std::string &pos, std::string index_word);
 
     std::vector<OtherSynsetIdAndPointer> connectedSynsets(SynsetIdentifier ownId, Direction = Both);
-
     std::vector<OtherSynsetIdAndPointer> shortestPath(SynsetIdentifier origin, SynsetIdentifier target, bool directed = false);
 
 private:

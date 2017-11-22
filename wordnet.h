@@ -23,16 +23,21 @@ struct SynsetPointer {
     int sourceTarget;
 };
 
+using SynsetIdentifier = std::pair<char, SynsetOffset>;
+using OtherSynsetIdAndPointer = std::pair<SynsetIdentifier, SynsetPointer*>;
 using SynsetType = char;
 
 struct Synset {
-
     SynsetOffset offset;
     int lexFileNumber;
     SynsetType type;
     std::vector<std::string> words;
     std::vector<SynsetPointer> pointers;
     std::string gloss;
+
+    SynsetIdentifier id() const {
+        return std::make_pair(type, offset);
+    }
 };
 
 using SynsetDatabase = std::vector<Synset>;

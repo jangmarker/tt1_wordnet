@@ -21,12 +21,6 @@ Synset *Database::synsetByIdentifier(SynsetIdentifier identifier) {
     return mSynsetsByIndex[identifier.first][identifier.second];
 }
 
-Synset *Database::synsetByOffset(const std::string &pos, SynsetOffset offset)
-{
-    auto *synset = mSynsetsByIndex[pos[0]][offset];
-    return synset;
-}
-
 std::vector<Synset> Database::synsetsByIndexWord(const std::string &pos, std::string index_word)
 {
     // TODO create cache
@@ -40,7 +34,7 @@ std::vector<Synset> Database::synsetsByIndexWord(const std::string &pos, std::st
     std::vector<Synset> synsets;
     synsets.reserve(indexItem->synsets.size());
     for (const SynsetOffset offset : indexItem->synsets) {
-        synsets.push_back(*synsetByOffset(pos, offset));
+        synsets.push_back(*synsetByIdentifier(std::make_pair(pos[0], offset)));
     }
 
     return synsets;

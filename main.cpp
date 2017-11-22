@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
             }
         }
     } else if (*semrels) {
-        const auto synset = database.synsetByOffset(partOfSpeech, offset);
+        const auto synset = database.synsetByIdentifier(std::make_pair(partOfSpeech[0], offset));
 
         const auto is_semantic = [](const SynsetPointer &pointer) { return pointer.sourceTarget == 0; };
 
