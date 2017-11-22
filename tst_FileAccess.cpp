@@ -83,7 +83,7 @@ TEST_CASE("parse calculator index line", "[index]") {
     stream >> index;
     REQUIRE(index.size() == 1);
     REQUIRE(index[0].lemma == std::string("calculator"));
-    REQUIRE(index[0].pos == POS::Pos_Noun);
+    REQUIRE(index[0].pos == 'n');
     REQUIRE(index[0].synsets.size() == 2);
     REQUIRE(index[0].synsets[0] == 9887034);
     REQUIRE(index[0].synsets[1] == 2938886);

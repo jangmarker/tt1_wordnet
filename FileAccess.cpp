@@ -40,7 +40,7 @@ namespace {
 std::istream &operator>>(std::istream &stream, LemmaIndexItem &index)
 {
     std::string lemma;
-    std::string pos;
+    char pos;
     int synsetCount;
     int _ptrCount;
     std::string _ptrSymbol;
@@ -65,7 +65,7 @@ std::istream &operator>>(std::istream &stream, LemmaIndexItem &index)
         }
 
         index.lemma = lemma;
-        index.pos = str_to_pos.at(pos);
+        index.pos = pos;
         index.synsets = offsets;
     }
 
@@ -88,14 +88,14 @@ std::istream &operator>>(std::istream &stream, SynsetPointer &pointer)
 {
     std::string pointerSymbol;
     SynsetOffset synsetOffset;
-    std::string pos;
+    char pos;
     int sourceTarget;
 
     stream >> pointerSymbol >> synsetOffset >> pos >> std::hex >> sourceTarget >> std::dec;
 
     pointer.type = pointerSymbol;
     pointer.offset = synsetOffset;
-    pointer.pos = str_to_pos.at(pos);
+    pointer.pos = pos;
     pointer.sourceTarget = sourceTarget;
 
     return stream;
@@ -113,7 +113,7 @@ std::istream &operator>>(std::istream &stream, Synset &synset)
 
     SynsetOffset offset;
     int lexFileNumber;
-    std::string type;
+    char type;
     unsigned long wordCount;
     std::string _word;
     int _lexId;
@@ -146,7 +146,7 @@ std::istream &operator>>(std::istream &stream, Synset &synset)
 
     synset.offset = offset;
     synset.lexFileNumber = lexFileNumber;
-    synset.type = synsettype_map.at(type);
+    synset.type = type;
     synset.words = words;
     synset.pointers = pointers;
     synset.gloss = gloss;
@@ -157,7 +157,7 @@ std::istream &operator>>(std::istream &stream, Synset &synset)
 std::ostream &operator<<(std::ostream &stream, const Synset &synset)
 {
     return stream
-           << pos_to_str[synset.type] << " "
+           << synset.type << " "
            << std::setfill('0') << std::setw(8) << synset.offset << std::setw(0)
            << synset.gloss;
 }

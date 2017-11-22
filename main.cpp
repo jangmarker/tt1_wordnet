@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
 
         Database::Direction direction = relationDirection == "any" ? Database::Both :
                                         relationDirection == "in" ? Database::Incoming : Database::Outgoing;
-        SynsetIdentifier originIdentifier = std::make_pair(pos_to_str[synset->type][0], synset->offset);
+        SynsetIdentifier originIdentifier = std::make_pair(synset->type, synset->offset);
         std::vector<OtherSynsetIdAndPointer> connected = database.connectedSynsets(originIdentifier, direction);
 
         for (const OtherSynsetIdAndPointer &otherSynsetIdAndPointer : connected) {
