@@ -91,6 +91,8 @@ int main(int argc, char** argv) {
             if (*shortestpathFull)
                 std::cout << synset->words << std::endl;
         }
+    } else {
+        // TODO task 4 is not implemented.. two days is not enough time :-(
     }
 
     return 0;
