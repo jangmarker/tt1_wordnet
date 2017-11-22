@@ -77,7 +77,14 @@ int main(int argc, char** argv) {
             }
         }
     } else if (*shortestpath) {
+        SynsetIdentifier origin = std::make_pair(partOfSpeech[0], offset);
+        SynsetIdentifier target = std::make_pair(partOfSpeech2[0], offset2);
 
+        std::vector<SynsetIdentifier> shortestPath = database.shortestPath(origin, target);
+        for (SynsetIdentifier id : shortestPath) {
+            Synset *synset = database.synsetByIdentifier(id);
+            std::cout << *(synset) << std::endl;
+        }
     }
 
     return 0;

@@ -1,6 +1,9 @@
 #include "Database.h"
 
+#include "searchable_queue.h"
+
 #include <algorithm>
+#include <iostream>
 
 Database::Database(FileAccess &files)
     : mFiles(files)
@@ -64,6 +67,59 @@ std::vector<OtherSynsetIdAndPointer> Database::connectedSynsets(SynsetIdentifier
 
     return connected;
 };
+
+std::ostream &operator<<(std::ostream &stream, const SynsetIdentifier &id)
+{
+    stream << id.first << " " << id.second;
+}
+
+std::vector<SynsetIdentifier> Database::shortestPath(SynsetIdentifier origin, SynsetIdentifier target)
+{
+    const SynsetIdentifier nullId = std::make_pair('0', 0);
+    std::map<SynsetIdentifier, int> distance;
+    std::map<SynsetIdentifier, SynsetIdentifier> previous;
+
+    const auto smallestOnTop = [&distance](const SynsetIdentifier& a, const SynsetIdentifier& b) -> bool {
+        return distance[a] > distance[b];
+    };
+    searchable_queue<SynsetIdentifier, std::vector<SynsetIdentifier>, decltype(smallestOnTop)> nodes(smallestOnTop);
+    for (auto& db : mSynsets) {
+        for (Synset& synset : db.second) {
+            SynsetIdentifier id = std::make_pair(db.first, synset.offset);
+            distance[id] = id == origin ? 0 : std::numeric_limits<int>::max();
+            previous[id] = nullId;
+            nodes.push(id);
+        }
+    }
+
+    std::cout << "target " << target << std::endl;
+    while (!nodes.empty()) {
+        SynsetIdentifier current = nodes.top();
+        nodes.pop();
+        std::cout << "current " << current << " " << distance[current] << std::endl;
+        // TODO directed/undirected
+        for (const OtherSynsetIdAndPointer& neighborAndEdge : connectedSynsets(current)) {
+            SynsetIdentifier neighbor = neighborAndEdge.first;
+            if (nodes.find(neighbor) != nodes.cend()) {
+                auto new_distance = distance[current] + 1;
+                if (new_distance < distance[neighbor]) {
+                    distance[neighbor] = new_distance;
+                    previous[neighbor] = current;
+                    nodes.update();
+                }
+            }
+            if (current == target) {
+                std::vector<SynsetIdentifier> path;
+                path.insert(path.cbegin(), current);
+                while (previous[current] != nullId) {
+                    current = previous[current];
+                    path.insert(path.cbegin(), current);
+                }
+                return path;
+            }
+        }
+    }
+}
 
 void Database::loadSynsetsForPos(const std::string &pos)
 {
