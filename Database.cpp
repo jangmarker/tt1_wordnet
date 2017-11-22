@@ -1,4 +1,5 @@
 #include "Database.h"
+#include "Input.h"
 
 #include <algorithm>
 #include <iostream>

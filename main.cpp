@@ -1,3 +1,4 @@
+#include "Output.h"
 #include "FileAccess.h"
 #include "Database.h"
 
