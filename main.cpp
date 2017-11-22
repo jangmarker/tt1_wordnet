@@ -4,6 +4,7 @@
 #include "3rdparty/CLI11.hpp"
 
 #include <iostream>
+#include <iomanip>
 
 static const std::string databaseFolder("/home/privat/Projects/WordNet-3.0/dict/");
 
@@ -32,7 +33,10 @@ int main(int argc, char** argv) {
         } else {
             for (const auto &synset : synsets) {
                 // TODO format offset and type
-                std::cout << synset.type << " " << synset.offset << synset.gloss << std::endl;
+                std::cout << pos_to_str[synset.type] << " "
+                          << std::setfill('0') << std::setw(8) << synset.offset << std::setw(0)
+                          << synset.gloss
+                          << std::endl;
             }
         }
     }

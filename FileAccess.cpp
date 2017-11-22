@@ -31,7 +31,7 @@ std::istream &operator>>(std::istream &stream, LemmaIndexItem &index)
         }
 
         index.lemma = lemma;
-        index.pos = pos_map.at(pos);
+        index.pos = str_to_pos.at(pos);
         index.synsets = offsets;
     }
 
@@ -82,7 +82,7 @@ std::istream &operator>>(std::istream &stream, SynsetPointer &pointer)
 
     pointer.type = SynsetPointer::Unkown; // TODO from pointerSymbol
     pointer.offset = synsetOffset;
-    pointer.pos = pos_map.at(pos);
+    pointer.pos = str_to_pos.at(pos);
 
     return stream;
 }

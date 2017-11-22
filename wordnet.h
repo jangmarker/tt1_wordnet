@@ -14,12 +14,14 @@ enum POS {
     Pos_Adverb
 };
 
-static const std::map<std::string, POS> pos_map{
+static const std::map<std::string, POS> str_to_pos{
         {"n", POS::Pos_Noun},
         {"v", POS::Pos_Verb},
         {"a", POS::Pos_Adjective},
         {"r", POS::Pos_Adverb},
 };
+
+static const std::vector<std::string> pos_to_str{{"n"}, {"v"}, {"a"}, {"r"}};
 
 using SynsetOffsets = std::vector<SynsetOffset>;
 
