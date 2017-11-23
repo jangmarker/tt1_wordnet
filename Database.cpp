@@ -4,6 +4,10 @@
 #include <algorithm>
 #include <iostream>
 
+namespace {
+    const SynsetConnection nullId{std::make_pair('0', 0), nullptr};
+}
+
 Database::Database(FileAccess &files)
     : mFiles(files)
 {
@@ -62,7 +66,21 @@ std::vector<SynsetConnection> Database::connectedSynsets(SynsetIdentifier ownId,
 
 std::vector<SynsetConnection> Database::shortestPath(SynsetIdentifier origin, SynsetIdentifier target, bool directed)
 {
-    const SynsetConnection nullId{std::make_pair('0', 0), nullptr};
+    auto res = dijkstra(origin, target, directed);
+
+    SynsetIdentifier current = target;
+
+    std::vector<SynsetConnection> path;
+    path.insert(path.cbegin(), SynsetConnection{current, nullptr});
+    while (res.previous[current] != nullId) {
+        path.insert(path.cbegin(), res.previous[current]);
+        current = res.previous[current].otherId;
+    }
+    return path;
+}
+
+DijkstraResult Database::dijkstra(SynsetIdentifier origin, SynsetIdentifier target, bool directed)
+{
     std::map<SynsetIdentifier, int> distance;
     std::map<SynsetIdentifier, SynsetConnection> previous;
 
@@ -103,16 +121,12 @@ std::vector<SynsetConnection> Database::shortestPath(SynsetIdentifier origin, Sy
                 }
             }
             if (current == target) {
-                std::vector<SynsetConnection> path;
-                path.insert(path.cbegin(), SynsetConnection{current, nullptr});
-                while (previous[current] != nullId) {
-                    path.insert(path.cbegin(), previous[current]);
-                    current = previous[current].otherId;
-                }
-                return path;
+                return {distance, previous};
             }
         }
     }
+
+    return {distance, previous};
 }
 
 void Database::loadSynsetsForPos(PartOfSpeech pos)

@@ -5,6 +5,11 @@
 #include <set>
 #include "FileAccess.h"
 
+struct DijkstraResult {
+    std::map<SynsetIdentifier, int> distance;
+    std::map<SynsetIdentifier, SynsetConnection> previous;
+};
+
 class Database {
 public:
     explicit Database(FileAccess &files);
@@ -18,6 +23,7 @@ public:
 
     std::vector<SynsetConnection> connectedSynsets(SynsetIdentifier ownId, Direction = Both);
     std::vector<SynsetConnection> shortestPath(SynsetIdentifier origin, SynsetIdentifier target, bool directed = false);
+    DijkstraResult dijkstra(SynsetIdentifier origin, SynsetIdentifier target, bool directed = false);
 
 private:
     void loadSynsetsForPos(PartOfSpeech pos);
