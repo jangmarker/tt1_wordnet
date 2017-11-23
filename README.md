@@ -27,8 +27,6 @@ Subcommands:
   shortestpath
 ```
 
-Please note that task 4 is not implemented as of now.
-
 ## Task 1 - query
 ```
 Usage: ./tt1_wordnet query [OPTIONS]
@@ -68,6 +66,17 @@ Options:
   --offset2 UINT              Target offset
   --directed                  Only search directed
   --full                      Show index words for all connected synsets
+```
+
+## Task 4 - eccentricity
+```
+Usage: ./tt1_wordnet eccentricity [OPTIONS]
+
+Options:
+  -h,--help                   Print this help message and exit
+  --pos TEXT in {a,n,r,v}     Part of speech
+  --offset UINT               Offset
+  --directed                  Only search directed
 ```
 
 # Code Organisation
