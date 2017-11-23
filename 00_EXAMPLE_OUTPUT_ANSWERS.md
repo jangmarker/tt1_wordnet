@@ -83,4 +83,37 @@ n 03481172 a hand tool with a heavy rigid head and a handle; used to deliver an 
 ```
 
 ## Task 4
-nicht bearbeitet
+
+```
+human
+./tt1_wordnet --db=../WordNet-3.0/dict/ eccentricity --pos=n --offset=02472293
+12
+./tt1_wordnet --db=../WordNet-3.0/dict/ eccentricity --pos=n --offset=02472293 --directed
+12
+
+abbot
+./tt1_wordnet --db=../WordNet-3.0/dict/ eccentricity --pos=n --offset=09754404
+15
+./tt1_wordnet --db=../WordNet-3.0/dict/ eccentricity --pos=n --offset=09754404 --directed
+15
+
+tool
+./tt1_wordnet --db=../WordNet-3.0/dict/ eccentricity --pos=n --offset=00173761
+12
+./tt1_wordnet --db=../WordNet-3.0/dict/ eccentricity --pos=n --offset=00173761 --directed
+12
+
+hammerhead
+./tt1_wordnet --db=../WordNet-3.0/dict/ eccentricity --pos=n --offset=03482128
+14
+./tt1_wordnet --db=../WordNet-3.0/dict/ eccentricity --pos=n --offset=03482128 --directed
+14
+```
+
+The `--directed` flag does not seem to make a difference, which I consider an highly unlikely
+fact due to the wording of the task. However, I could not find a bug in the algorithms so far,
+the `--directed` flag does select another group of relationships than an execution without the flag
+would.
+
+If the `--directed` flag should indeed not make a difference, it would indicate that most relationships
+between synsets in the net would be bidirectional, at least for the selected group of words.
