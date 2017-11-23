@@ -123,10 +123,10 @@ Database::DijkstraResult Database::dijkstra(SynsetIdentifier origin, SynsetIdent
         }
     }
 
+    Direction direction = directed ? Outgoing : Both;
     while (!nodes.empty()) {
         SynsetIdentifier current = *nodes.begin();
         nodes.erase(nodes.begin());
-        Direction direction = directed ? Outgoing : Both;
         for (const SynsetConnection& neighborAndEdge : connectedSynsets(current, direction)) {
             SynsetIdentifier neighbor = neighborAndEdge.otherId;
             auto neighborIt = nodes.find(neighbor);
