@@ -53,8 +53,8 @@ struct SynsetConnection {
     }
 
     bool operator<(const SynsetConnection &other) const {
-        return this->otherId < other.otherId && this->pointer->offset < other.pointer->offset
-                                             && this->pointer->pos < other.pointer->pos;
+        return this->otherId < other.otherId || this->pointer->offset < other.pointer->offset
+                                             || this->pointer->pos < other.pointer->pos;
     }
 };
 using SynsetType = char;
