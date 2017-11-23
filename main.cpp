@@ -43,6 +43,11 @@ int main(int argc, char** argv) {
     auto shortestpathDirected = shortestpath->add_flag("--directed", "Only search directed");
     auto shortestpathFull = shortestpath->add_flag("--full", "Show index words for all connected synsets");
 
+    auto* eccentricity = app.add_subcommand("eccentricity");
+    eccentricity->add_set("--pos", partOfSpeech, partOfSpeechOptions, "Part of speech")->required();
+    eccentricity->add_option("--offset", offset, "Offset")->required();
+    auto eccentricityDirected = eccentricity->add_flag("--directed", "Only search directed");
+
     CLI11_PARSE(app, argc, argv);
 
     FileAccess fileAccess(databaseFolder);
@@ -91,7 +96,10 @@ int main(int argc, char** argv) {
                 std::cout << synset->words << std::endl;
         }
     } else { // Task 4
-        // TODO task 4 is not implemented.. 1.5 days is not enough time :-(
+        SynsetIdentifier origin = std::make_pair(partOfSpeech[0], offset);
+
+        auto res = database.eccentricity(origin, *eccentricityDirected);
+        std::cout << res.second << std::endl;
     }
 
     return 0;

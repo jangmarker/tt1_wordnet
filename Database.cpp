@@ -79,6 +79,25 @@ std::vector<SynsetConnection> Database::shortestPath(SynsetIdentifier origin, Sy
     return path;
 }
 
+std::pair<SynsetIdentifier, int> Database::eccentricity(SynsetIdentifier origin, bool directed)
+{
+    auto res = dijkstra(origin, nullId.otherId, directed);
+
+    int max_distance = std::numeric_limits<int>::min();
+    SynsetIdentifier most_far_away_element;
+    for (std::pair<SynsetIdentifier, int> distance : res.distance) {
+        if (distance.second == std::numeric_limits<int>::max())
+            // not part of origin's graph
+            continue;
+        if (max_distance < distance.second) {
+            max_distance = distance.second;
+            most_far_away_element = distance.first;
+        }
+    }
+
+    return std::make_pair(most_far_away_element, max_distance);
+};
+
 DijkstraResult Database::dijkstra(SynsetIdentifier origin, SynsetIdentifier target, bool directed)
 {
     std::map<SynsetIdentifier, int> distance;
@@ -106,17 +125,18 @@ DijkstraResult Database::dijkstra(SynsetIdentifier origin, SynsetIdentifier targ
 
     while (!nodes.empty()) {
         SynsetIdentifier current = *nodes.begin();
-        nodes.erase(current);
+        nodes.erase(nodes.begin());
         Direction direction = directed ? Outgoing : Both;
         for (const SynsetConnection& neighborAndEdge : connectedSynsets(current, direction)) {
             SynsetIdentifier neighbor = neighborAndEdge.otherId;
-            if (nodes.find(neighbor) != nodes.end()) {
+            auto neighborIt = nodes.find(neighbor);
+            if (neighborIt != nodes.end()) {
                 auto new_distance = distance[current] == std::numeric_limits<int>::max() ? distance[current]
                                                                                          : (distance[current] + 1);
                 if (new_distance < distance[neighbor]) {
                     distance[neighbor] = new_distance;
                     previous[neighbor] = SynsetConnection{current, neighborAndEdge.pointer};
-                    nodes.erase(neighbor);
+                    nodes.erase(neighborIt);
                     nodes.insert(neighbor);
                 }
             }

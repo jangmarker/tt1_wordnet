@@ -23,6 +23,7 @@ public:
 
     std::vector<SynsetConnection> connectedSynsets(SynsetIdentifier ownId, Direction = Both);
     std::vector<SynsetConnection> shortestPath(SynsetIdentifier origin, SynsetIdentifier target, bool directed = false);
+    std::pair<SynsetIdentifier, int> eccentricity(SynsetIdentifier origin, bool directed);
     DijkstraResult dijkstra(SynsetIdentifier origin, SynsetIdentifier target, bool directed = false);
 
 private:
