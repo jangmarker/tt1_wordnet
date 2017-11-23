@@ -98,7 +98,7 @@ std::pair<SynsetIdentifier, int> Database::eccentricity(SynsetIdentifier origin,
     return std::make_pair(most_far_away_element, max_distance);
 };
 
-DijkstraResult Database::dijkstra(SynsetIdentifier origin, SynsetIdentifier target, bool directed)
+Database::DijkstraResult Database::dijkstra(SynsetIdentifier origin, SynsetIdentifier target, bool directed)
 {
     std::map<SynsetIdentifier, int> distance;
     std::map<SynsetIdentifier, SynsetConnection> previous;
